@@ -1,0 +1,92 @@
+import java.util.Scanner;
+
+public class Parqueo {
+    private static final Scanner teclado = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        int motos = 0;
+        int autos = 0;
+        int camiones = 0;
+        double totalRecaudado = 0;
+        double mayorPago = -1;
+        String placaMayorPago = "Ninguna";
+        String continuar;
+
+        do {
+            int tipo;
+            do {
+                System.out.println("\n===== PARQUEO CI =====");
+                System.out.println("1. Moto");
+                System.out.println("2. Auto");
+                System.out.println("3. Camion");
+                tipo = leerEntero("Tipo de vehiculo: ");
+                if (tipo < 1 || tipo > 3) {
+                    System.out.println("Tipo invalido. Selecciona 1, 2 o 3.");
+                }
+            } while (tipo < 1 || tipo > 3);
+
+            System.out.print("Placa: ");
+            String placa = teclado.nextLine().trim();
+
+            int minutos;
+            do {
+                minutos = leerEntero("Minutos estacionado (mayor que 0): ");
+                if (minutos <= 0) {
+                    System.out.println("Los minutos deben ser mayores que cero.");
+                }
+            } while (minutos <= 0);
+
+            Vehiculo vehiculo;
+            switch (tipo) {
+                case 1:
+                    vehiculo = new Moto(placa, minutos);
+                    motos++;
+                    break;
+                case 2:
+                    vehiculo = new Auto(placa, minutos);
+                    autos++;
+                    break;
+                default:
+                    vehiculo = new Camion(placa, minutos);
+                    camiones++;
+                    break;
+            }
+
+            vehiculo.imprimirTicket();
+            double cobro = vehiculo.calcularCobro();
+            totalRecaudado += cobro;
+            if (cobro > mayorPago) {
+                mayorPago = cobro;
+                placaMayorPago = placa;
+            }
+
+            do {
+                System.out.print("Registrar otro vehiculo? (s/n): ");
+                continuar = teclado.nextLine().trim().toLowerCase();
+                if (!continuar.equals("s") && !continuar.equals("n")) {
+                    System.out.println("Respuesta invalida. Escribe s o n.");
+                }
+            } while (!continuar.equals("s") && !continuar.equals("n"));
+
+        } while (continuar.equals("s"));
+
+        System.out.println("\n===== REPORTE DEL DIA =====");
+        System.out.println("Motos: " + motos);
+        System.out.println("Autos: " + autos);
+        System.out.println("Camiones: " + camiones);
+        System.out.printf("Total recaudado: C$%.2f%n", totalRecaudado);
+        System.out.println("Placa que pago mas: " + placaMayorPago);
+        teclado.close();
+    }
+
+    private static int leerEntero(String mensaje) {
+        while (true) {
+            System.out.print(mensaje);
+            try {
+                return Integer.parseInt(teclado.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada invalida. Escribe un numero entero.");
+            }
+        }
+    }
+}

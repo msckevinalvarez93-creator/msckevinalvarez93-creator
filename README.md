@@ -1,4 +1,4 @@
-# Kevin | Desarrollador Backend Java
+# Kevin Chavez | Desarrollador Backend Java
 
 Ingeniero en Sistemas en formación continua, enfocado en el desarrollo backend con Java. Me interesa construir aplicaciones sólidas, bien estructuradas y escalables.
 

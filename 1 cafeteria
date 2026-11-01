@@ -1,0 +1,110 @@
+import java.util.Scanner;
+
+public class Cafeteria {
+    private static final Scanner teclado = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        Producto[] productos = {
+            new Producto("Cafe americano", 45, 20),
+            new Producto("Cappuccino", 70, 15),
+            new Producto("Sandwich", 95, 10),
+            new Producto("Galleta de avena", 30, 25)
+        };
+        Caja caja = new Caja();
+        int opcion;
+
+        do {
+            System.out.println("\n===== CAFETERIA CI =====");
+            System.out.println("1. Ver productos");
+            System.out.println("2. Vender");
+            System.out.println("3. Reabastecer");
+            System.out.println("4. Cambiar precio");
+            System.out.println("5. Reporte del dia");
+            System.out.println("0. Salir");
+            opcion = leerEntero("Elige una opcion: ");
+
+            switch (opcion) {
+                case 1:
+                    mostrarProductos(productos);
+                    break;
+                case 2: {
+                    mostrarProductos(productos);
+                    int indice = elegirProducto(productos);
+                    int cantidad = leerEntero("Cantidad a vender: ");
+                    caja.cobrar(productos[indice], cantidad);
+                    break;
+                }
+                case 3: {
+                    mostrarProductos(productos);
+                    int indice = elegirProducto(productos);
+                    int cantidad = leerEntero("Cantidad a reabastecer: ");
+                    productos[indice].reabastecer(cantidad);
+                    break;
+                }
+                case 4: {
+                    mostrarProductos(productos);
+                    int indice = elegirProducto(productos);
+                    double precio = leerDouble("Nuevo precio: ");
+                    productos[indice].setPrecio(precio);
+                    break;
+                }
+                case 5:
+                    caja.mostrarReporte();
+                    break;
+                case 0:
+                    System.out.println("Gracias por utilizar el sistema.");
+                    break;
+                default:
+                    System.out.println("Opcion invalida.");
+            }
+        } while (opcion != 0);
+
+        teclado.close();
+    }
+
+    private static void mostrarProductos(Producto[] productos) {
+        System.out.println("\n----- PRODUCTOS -----");
+        for (int i = 0; i < productos.length; i++) {
+            System.out.printf("%d. %s | Precio: C$%.2f | Stock: %d",
+                    i + 1, productos[i].getNombre(),
+                    productos[i].getPrecio(), productos[i].getStock());
+            if (productos[i].getStock() < 5) {
+                System.out.print(" (stock bajo)");
+            }
+            System.out.println();
+        }
+    }
+
+    private static int elegirProducto(Producto[] productos) {
+        int numero;
+        do {
+            numero = leerEntero("Numero del producto (1-" + productos.length + "): ");
+            if (numero < 1 || numero > productos.length) {
+                System.out.println("Producto invalido. Intenta de nuevo.");
+            }
+        } while (numero < 1 || numero > productos.length);
+        return numero - 1;
+    }
+
+    private static int leerEntero(String mensaje) {
+        while (true) {
+            System.out.print(mensaje);
+            try {
+                return Integer.parseInt(teclado.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada invalida. Escribe un numero entero.");
+            }
+        }
+    }
+
+    private static double leerDouble(String mensaje) {
+        while (true) {
+            System.out.print(mensaje);
+            try {
+                return Double.parseDouble(teclado.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada invalida. Escribe un numero.");
+            }
+        }
+    }
+}

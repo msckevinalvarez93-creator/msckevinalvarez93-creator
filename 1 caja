@@ -1,0 +1,52 @@
+public class Caja {
+    private double totalVendido;
+    private int numeroVentas;
+
+    public Caja() {
+        totalVendido = 0;
+        numeroVentas = 0;
+    }
+
+    public double getTotalVendido() {
+        return totalVendido;
+    }
+
+    public int getNumeroVentas() {
+        return numeroVentas;
+    }
+
+    public boolean cobrar(Producto producto, int cantidad) {
+        if (producto == null || !producto.vender(cantidad)) {
+            System.out.println("Venta rechazada: cantidad invalida o stock insuficiente.");
+            return false;
+        }
+
+        double subtotal = producto.getPrecio() * cantidad;
+        double descuento = subtotal >= 300 ? subtotal * 0.10 : 0;
+        double baseConDescuento = subtotal - descuento;
+        double iva = redondear(baseConDescuento * 0.15);
+        double total = redondear(baseConDescuento + iva);
+
+        System.out.println("\n----- TICKET -----");
+        System.out.println(producto.getNombre() + " x " + cantidad);
+        System.out.printf("Subtotal: C$%.2f%n", subtotal);
+        System.out.printf("Descuento: C$%.2f%n", descuento);
+        System.out.printf("IVA (15%%): C$%.2f%n", iva);
+        System.out.printf("TOTAL: C$%.2f%n", total);
+        System.out.println("------------------");
+
+        totalVendido += total;
+        numeroVentas++;
+        return true;
+    }
+
+    private double redondear(double valor) {
+        return Math.round(valor * 100.0) / 100.0;
+    }
+
+    public void mostrarReporte() {
+        System.out.println("\n===== REPORTE DEL DIA =====");
+        System.out.println("Numero de ventas: " + numeroVentas);
+        System.out.printf("Total vendido: C$%.2f%n", totalVendido);
+    }
+}

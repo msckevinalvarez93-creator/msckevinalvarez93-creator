@@ -1,4 +1,6 @@
-public class Caja {
+import java.util.Locale;
+
+class Caja {
     private double totalVendido;
     private int numeroVentas;
 
@@ -21,21 +23,21 @@ public class Caja {
             return false;
         }
 
-        double subtotal = producto.getPrecio() * cantidad;
-        double descuento = subtotal >= 300 ? subtotal * 0.10 : 0;
+        double subtotal = redondear(producto.getPrecio() * cantidad);
+        double descuento = subtotal >= 300 ? redondear(subtotal * 0.10) : 0;
         double baseConDescuento = subtotal - descuento;
         double iva = redondear(baseConDescuento * 0.15);
         double total = redondear(baseConDescuento + iva);
 
         System.out.println("\n----- TICKET -----");
         System.out.println(producto.getNombre() + " x " + cantidad);
-        System.out.printf("Subtotal: C$%.2f%n", subtotal);
-        System.out.printf("Descuento: C$%.2f%n", descuento);
-        System.out.printf("IVA (15%%): C$%.2f%n", iva);
-        System.out.printf("TOTAL: C$%.2f%n", total);
+        System.out.printf(Locale.US, "Subtotal: C$%.2f%n", subtotal);
+        System.out.printf(Locale.US, "Descuento: C$%.2f%n", descuento);
+        System.out.printf(Locale.US, "IVA (15%%): C$%.2f%n", iva);
+        System.out.printf(Locale.US, "TOTAL: C$%.2f%n", total);
         System.out.println("------------------");
 
-        totalVendido += total;
+        totalVendido = redondear(totalVendido + total);
         numeroVentas++;
         return true;
     }
@@ -47,6 +49,47 @@ public class Caja {
     public void mostrarReporte() {
         System.out.println("\n===== REPORTE DEL DIA =====");
         System.out.println("Numero de ventas: " + numeroVentas);
-        System.out.printf("Total vendido: C$%.2f%n", totalVendido);
+        System.out.printf(Locale.US, "Total vendido: C$%.2f%n", totalVendido);
+    }
+}
+
+class Producto {
+    private final String nombre;
+    private final double precio;
+    private int stock;
+
+    public Producto(String nombre, double precio, int stock) {
+        this.nombre = nombre;
+        this.precio = precio;
+        this.stock = stock;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public double getPrecio() {
+        return precio;
+    }
+
+    public int getStock() {
+        return stock;
+    }
+
+    public boolean vender(int cantidad) {
+        if (cantidad <= 0 || cantidad > stock) {
+            return false;
+        }
+        stock -= cantidad;
+        return true;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Caja caja = new Caja();
+        Producto p = new Producto("Cuaderno", 150.0, 5);
+        caja.cobrar(p, 2);
+        caja.mostrarReporte();
     }
 }

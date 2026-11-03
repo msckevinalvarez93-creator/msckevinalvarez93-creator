@@ -44,4 +44,24 @@ public class Producto {
             System.out.println("Cantidad invalida para reabastecer.");
         }
     }
+
+    public static void main(String[] args) {
+        Producto p = new Producto("Teclado", 25.50, 10);
+
+        System.out.println("Producto: " + p.getNombre());
+        System.out.println("Precio: " + p.getPrecio());
+        System.out.println("Stock inicial: " + p.getStock());
+
+        System.out.println("Venta de 3 unidades? " + p.vender(3));
+        System.out.println("Stock tras vender: " + p.getStock());
+
+        p.reabastecer(5);
+        System.out.println("Stock tras reabastecer: " + p.getStock());
+
+        p.setPrecio(-1);
+        p.setPrecio(30.00);
+        System.out.println("Precio final: " + p.getPrecio());
+    }
 }
+
+

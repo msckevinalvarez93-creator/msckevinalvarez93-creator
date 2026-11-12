@@ -7,18 +7,11 @@ public abstract class Vehiculo {
         this.minutos = minutos;
     }
 
-    public String getPlaca() {
-        return placa;
-    }
-
-    public int getMinutos() {
-        return minutos;
-    }
+    public String getPlaca() { return placa; }
+    public int getMinutos() { return minutos; }
 
     public int calcularHoras() {
-        if (minutos <= 15) {
-            return 0;
-        }
+        if (minutos <= 15) return 0;
         return (int) Math.ceil(minutos / 60.0);
     }
 
@@ -29,12 +22,12 @@ public abstract class Vehiculo {
     }
 
     public void imprimirTicket() {
-        System.out.println("\n----- TICKET DE PARQUEO -----");
-        System.out.println("Tipo: " + getClass().getSimpleName());
+        System.out.println("--- TICKET ---");
+        System.out.println("Tipo: " + this.getClass().getSimpleName());
         System.out.println("Placa: " + placa);
-        System.out.println("Minutos estacionado: " + minutos);
+        System.out.println("Minutos: " + minutos);
         System.out.println("Horas cobradas: " + calcularHoras());
-        System.out.printf("Total: C$%.2f%n", calcularCobro());
-        System.out.println("-----------------------------");
+        System.out.println("Total: C$" + calcularCobro());
+        System.out.println("--------------");
     }
 }

@@ -1,92 +1,62 @@
 import java.util.Scanner;
 
 public class Parqueo {
-    private static final Scanner teclado = new Scanner(System.in);
-
     public static void main(String[] args) {
-        int motos = 0;
-        int autos = 0;
-        int camiones = 0;
+        Scanner sc = new Scanner(System.in);
         double totalRecaudado = 0;
+        int cantMotos = 0, cantAutos = 0, cantCamiones = 0, cantBicis = 0;
+        String placaMayor = "Ninguno";
         double mayorPago = -1;
-        String placaMayorPago = "Ninguna";
-        String continuar;
+        String respuesta;
 
         do {
             int tipo;
             do {
-                System.out.println("\n===== PARQUEO CI =====");
-                System.out.println("1. Moto");
-                System.out.println("2. Auto");
-                System.out.println("3. Camion");
-                tipo = leerEntero("Tipo de vehiculo: ");
-                if (tipo < 1 || tipo > 3) {
-                    System.out.println("Tipo invalido. Selecciona 1, 2 o 3.");
-                }
-            } while (tipo < 1 || tipo > 3);
+                System.out.println("Tipo: 1. Moto  2. Auto  3. Camión  4. Bicicleta");
+                System.out.print("Elige tipo: ");
+                tipo = sc.nextInt();
+                sc.nextLine();
+                if (tipo < 1 || tipo > 4) System.out.println("Tipo inválido, intenta de nuevo.");
+            } while (tipo < 1 || tipo > 4);
 
             System.out.print("Placa: ");
-            String placa = teclado.nextLine().trim();
+            String placa = sc.nextLine();
 
             int minutos;
             do {
-                minutos = leerEntero("Minutos estacionado (mayor que 0): ");
-                if (minutos <= 0) {
-                    System.out.println("Los minutos deben ser mayores que cero.");
-                }
+                System.out.print("Minutos estacionado: ");
+                minutos = sc.nextInt();
+                sc.nextLine();
+                if (minutos <= 0) System.out.println("Los minutos deben ser mayores que 0.");
             } while (minutos <= 0);
 
-            Vehiculo vehiculo;
-            switch (tipo) {
-                case 1:
-                    vehiculo = new Moto(placa, minutos);
-                    motos++;
-                    break;
-                case 2:
-                    vehiculo = new Auto(placa, minutos);
-                    autos++;
-                    break;
-                default:
-                    vehiculo = new Camion(placa, minutos);
-                    camiones++;
-                    break;
+            Vehiculo v;
+            if (tipo == 1) { v = new Moto(placa, minutos); cantMotos++; }
+            else if (tipo == 2) { v = new Auto(placa, minutos); cantAutos++; }
+            else if (tipo == 3) { v = new Camion(placa, minutos); cantCamiones++; }
+            else { v = new Bicicleta(placa, minutos); cantBicis++; }
+
+            v.imprimirTicket();
+            totalRecaudado += v.calcularCobro();
+
+            // Bicicleta no cuenta para el que pagó más
+            if (tipo != 4 && v.calcularCobro() > mayorPago) {
+                mayorPago = v.calcularCobro();
+                placaMayor = v.getPlaca();
             }
 
-            vehiculo.imprimirTicket();
-            double cobro = vehiculo.calcularCobro();
-            totalRecaudado += cobro;
-            if (cobro > mayorPago) {
-                mayorPago = cobro;
-                placaMayorPago = placa;
-            }
+            System.out.print("¿Registrar otro vehículo? (s/n): ");
+            respuesta = sc.nextLine();
+        } while (respuesta.equalsIgnoreCase("s"));
 
-            do {
-                System.out.print("Registrar otro vehiculo? (s/n): ");
-                continuar = teclado.nextLine().trim().toLowerCase();
-                if (!continuar.equals("s") && !continuar.equals("n")) {
-                    System.out.println("Respuesta invalida. Escribe s o n.");
-                }
-            } while (!continuar.equals("s") && !continuar.equals("n"));
+        System.out.println("\n--- Reporte del día ---");
+        System.out.println("Motos: " + cantMotos);
+        System.out.println("Autos: " + cantAutos);
+        System.out.println("Camiones: " + cantCamiones);
+        System.out.println("Bicicletas: " + cantBicis);
+        System.out.println("Total recaudado: C$" + totalRecaudado);
+        System.out.println("Placa que pagó más: " + placaMayor + (mayorPago >= 0 ? " - C$" + mayorPago : ""));
 
-        } while (continuar.equals("s"));
-
-        System.out.println("\n===== REPORTE DEL DIA =====");
-        System.out.println("Motos: " + motos);
-        System.out.println("Autos: " + autos);
-        System.out.println("Camiones: " + camiones);
-        System.out.printf("Total recaudado: C$%.2f%n", totalRecaudado);
-        System.out.println("Placa que pago mas: " + placaMayorPago);
-        teclado.close();
-    }
-
-    private static int leerEntero(String mensaje) {
-        while (true) {
-            System.out.print(mensaje);
-            try {
-                return Integer.parseInt(teclado.nextLine().trim());
-            } catch (NumberFormatException e) {
-                System.out.println("Entrada invalida. Escribe un numero entero.");
-            }
-        }
+        sc.close();
     }
 }

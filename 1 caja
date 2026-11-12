@@ -1,95 +1,59 @@
-import java.util.Locale;
-
-class Caja {
+public class Caja {
     private double totalVendido;
     private int numeroVentas;
+    private int numeroOrden;
 
     public Caja() {
         totalVendido = 0;
         numeroVentas = 0;
+        numeroOrden = 0;
     }
 
-    public double getTotalVendido() {
-        return totalVendido;
+    public double getTotalVendido() { return totalVendido; }
+    public int getNumeroVentas() { return numeroVentas; }
+
+    private double redondear(double valor) {
+        return Math.round(valor * 100) / 100.0;
     }
 
-    public int getNumeroVentas() {
-        return numeroVentas;
-    }
-
+    // Versión que pide el PDF
     public boolean cobrar(Producto producto, int cantidad) {
-        if (producto == null || !producto.vender(cantidad)) {
-            System.out.println("Venta rechazada: cantidad invalida o stock insuficiente.");
+        return cobrar(producto, cantidad, "Cliente");
+    }
+
+    // Versión con reto opcional: nombre + número de orden
+    public boolean cobrar(Producto producto, int cantidad, String cliente) {
+        if (!producto.vender(cantidad)) {
+            System.out.println("No hay stock suficiente o cantidad inválida.");
             return false;
         }
+        numeroOrden++;
+        double subtotal = producto.getPrecio() * cantidad;
+        double descuento = 0;
+        if (subtotal >= 300) {
+            descuento = subtotal * 0.10;
+        }
+        double base = subtotal - descuento;
+        double iva = redondear(base * 0.15);
+        double total = redondear(base + iva);
 
-        double subtotal = redondear(producto.getPrecio() * cantidad);
-        double descuento = subtotal >= 300 ? redondear(subtotal * 0.10) : 0;
-        double baseConDescuento = subtotal - descuento;
-        double iva = redondear(baseConDescuento * 0.15);
-        double total = redondear(baseConDescuento + iva);
-
-        System.out.println("\n----- TICKET -----");
+        System.out.println("----- TICKET -----");
+        System.out.println("Orden #" + numeroOrden + " - Cliente: " + cliente);
         System.out.println(producto.getNombre() + " x " + cantidad);
-        System.out.printf(Locale.US, "Subtotal: C$%.2f%n", subtotal);
-        System.out.printf(Locale.US, "Descuento: C$%.2f%n", descuento);
-        System.out.printf(Locale.US, "IVA (15%%): C$%.2f%n", iva);
-        System.out.printf(Locale.US, "TOTAL: C$%.2f%n", total);
+        System.out.println("Subtotal:   C$" + subtotal);
+        System.out.println("Descuento:  C$" + descuento);
+        System.out.println("IVA (15%):  C$" + iva);
+        System.out.println("TOTAL:      C$" + total);
         System.out.println("------------------");
 
-        totalVendido = redondear(totalVendido + total);
+        totalVendido += total;
         numeroVentas++;
         return true;
     }
 
-    private double redondear(double valor) {
-        return Math.round(valor * 100.0) / 100.0;
-    }
-
     public void mostrarReporte() {
-        System.out.println("\n===== REPORTE DEL DIA =====");
-        System.out.println("Numero de ventas: " + numeroVentas);
-        System.out.printf(Locale.US, "Total vendido: C$%.2f%n", totalVendido);
-    }
-}
-
-class Producto {
-    private final String nombre;
-    private final double precio;
-    private int stock;
-
-    public Producto(String nombre, double precio, int stock) {
-        this.nombre = nombre;
-        this.precio = precio;
-        this.stock = stock;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public double getPrecio() {
-        return precio;
-    }
-
-    public int getStock() {
-        return stock;
-    }
-
-    public boolean vender(int cantidad) {
-        if (cantidad <= 0 || cantidad > stock) {
-            return false;
-        }
-        stock -= cantidad;
-        return true;
-    }
-}
-
-public class Main {
-    public static void main(String[] args) {
-        Caja caja = new Caja();
-        Producto p = new Producto("Cuaderno", 150.0, 5);
-        caja.cobrar(p, 2);
-        caja.mostrarReporte();
+        System.out.println("--- Reporte del día ---");
+        System.out.println("Número de ventas: " + numeroVentas);
+        System.out.println("Total vendido: C$" + redondear(totalVendido));
     }
 }

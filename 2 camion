@@ -1,19 +1,14 @@
 public class Camion extends Vehiculo {
-    public Camion(String placa, int minutos) {
-        super(placa, minutos);
-    }
-
+    public Camion(String placa, int minutos) { super(placa, minutos); }
     @Override
-    public double getTarifaPorHora() {
-        return 35;
-    }
+    public double getTarifaPorHora() { return 35; }
 
     @Override
     public double calcularCobro() {
-        double cobroBase = super.calcularCobro();
+        double cobro = super.calcularCobro();
         if (calcularHoras() >= 1) {
-            cobroBase += 50;
+            cobro += 50;
         }
-        return cobroBase;
+        return cobro;
     }
 }
